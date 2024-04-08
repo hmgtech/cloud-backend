@@ -314,45 +314,51 @@ def add_board(current_user):
 @app.route("/share_board", methods=["POST"])
 @token_required
 def share_board(current_user):
-    data = request.json
-    board_id = data.get("board_id")
-    to_email = data.get("invitee_email")
-    from_name = current_user[1]
-    from_email = current_user[2]
+    try:
+            
+        data = request.json
+        board_id = data.get("board_id")
+        to_email = data.get("invitee_email")
+        from_name = current_user[1]
+        from_email = current_user[2]
 
-    if not board_id or not to_email:
-        return jsonify({"message": "Missing required fields"}), 400
+        if not board_id or not to_email:
+            return jsonify({"message": "Missing required fields"}), 400
 
-    conn = create_connection()
-    cursor = conn.cursor()
+        conn = create_connection()
+        cursor = conn.cursor()
 
-    # Check if the board exists
-    cursor.execute("SELECT * FROM boards WHERE id = %s", (board_id,))
-    board = cursor.fetchone()
-    board_title = board[3]
+        # Check if the board exists
+        cursor.execute("SELECT * FROM boards WHERE id = %s", (board_id,))
+        board = cursor.fetchone()
+        board_title = board[3]
 
-    if not board:
-        return jsonify({"message": "Board not found"}), 404
+        if not board:
+            return jsonify({"message": "Board not found"}), 404
 
-    # Fetch user ID from email
-    cursor.execute("SELECT id FROM users WHERE email = %s", (to_email,))
-    user = cursor.fetchone()
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+        # Fetch user ID from email
+        cursor.execute("SELECT id FROM users WHERE email = %s", (to_email,))
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({"message": "User not found"}), 404
 
-    # Check if the board is already shared with the user
-    cursor.execute("SELECT * FROM user_boards WHERE board_id = %s AND user_id = %s", (board_id, user[0]))
-    shared_board = cursor.fetchone()
-    if shared_board:
-        return jsonify({"message": "Board is already shared with this user"}), 400
+        # Check if the board is already shared with the user
+        cursor.execute("SELECT * FROM user_boards WHERE board_id = %s AND user_id = %s", (board_id, user[0]))
+        shared_board = cursor.fetchone()
+        if shared_board:
+            return jsonify({"message": "Board is already shared with this user"}), 400
 
-    # Share the board with the user
-    cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return send_email_from_backend(to_email, from_email, from_name, board_title)
+        # Share the board with the user
+        cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return send_email_from_backend(to_email, from_email, from_name, board_title)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
 
+         
     # return jsonify({"message": "Board shared successfully"}), 200
 
 def send_email_from_backend(to_email, from_email, from_name, board_title):
