@@ -9,6 +9,7 @@ import datetime
 import mysql.connector
 from functools import wraps
 import hashlib
+from flask_mail import Mail, Message
 from flask import Flask, render_template, request, redirect, url_for, flash
 import smtplib
 from email.message import EmailMessage
@@ -32,16 +33,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'agiletrack.service@gmail.com'
 app.config['MAIL_PASSWORD'] = 'dtzw tuaq ejtm qkqd'
 
-def get_secret():
-    # Create a Secrets Manager client
-    client = boto3.client('secretsmanager', region_name='us-east-1')
-
-    # Fetch the secret
-    secret_name = "AgileTrackSecret"
-    response = client.get_secret_value(SecretId=secret_name)
-    secret = json.loads(response['SecretString'])
-    print(secret)
-    return secret
+mail = Mail(app)
 
 def create_connection():
     return mysql.connector.connect(
@@ -51,22 +43,22 @@ def create_connection():
         database=database_name
     )
 
-# # Create 'boards' table if not exists
-# create_boards_table_query = """
-# CREATE TABLE IF NOT EXISTS boards (
-#     id INT AUTO_INCREMENT PRIMARY KEY,
-#     state JSON
-# )
-# """
-# conn = create_connection()
-# cursor = conn.cursor()
-# cursor.execute(create_boards_table_query)
-# conn.commit()
-# cursor.close()
-# conn.close()
+# Create 'boards' table if not exists
+create_boards_table_query = """
+CREATE TABLE IF NOT EXISTS boards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    state JSON
+)
+"""
+conn = create_connection()
+cursor = conn.cursor()
+cursor.execute(create_boards_table_query)
+conn.commit()
+cursor.close()
+conn.close()
 
 # Secret key for JWT
-# app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 # Middleware to verify JWT token
 def token_required(f):
@@ -358,7 +350,7 @@ def share_board(current_user):
     cursor.close()
     conn.close()
     # Share the board with the user
-    # cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
+    cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
     return send_email_from_backend(to_email, from_email, from_name, board_title)
 
     # return jsonify({"message": "Board shared successfully"}), 200
@@ -439,5 +431,4 @@ def send_email():
 
 
 if __name__ == "__main__":
-    get_secret()
     app.run(debug=True)
