@@ -9,7 +9,6 @@ import datetime
 import mysql.connector
 from functools import wraps
 import hashlib
-from flask_mail import Mail, Message
 from flask import Flask, render_template, request, redirect, url_for, flash
 import smtplib
 from email.message import EmailMessage
@@ -33,7 +32,6 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'agiletrack.service@gmail.com'
 app.config['MAIL_PASSWORD'] = 'dtzw tuaq ejtm qkqd'
 
-mail = Mail(app)
 
 def get_secret():
     # Create a Secrets Manager client
