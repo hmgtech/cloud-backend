@@ -378,37 +378,37 @@ Best regards,
     if not recipient or not subject or not body:
         return jsonify({'error': 'Missing required fields'}), 400
 
-    try:
+    # try:
         # Initialize boto3 client for AWS Lambda
-        session = boto3.Session()
-        lambda_client = session.client('lambda', region_name='us-east-1')
+    session = boto3.Session()
+    lambda_client = session.client('lambda', region_name='us-east-1')
 
-        # Payload to be passed to the Lambda function
-        payload = {
-            "recipient": to_email,
-            "subject": subject,
-            "body": body
-        }
+    # Payload to be passed to the Lambda function
+    payload = {
+        "recipient": to_email,
+        "subject": subject,
+        "body": body
+    }
 
-        # Invoke the Lambda function
-        response = lambda_client.invoke(
-            FunctionName='arn:aws:lambda:us-east-1:730335289956:function:agileTrackLambda',
-            InvocationType='RequestResponse',  # Synchronous invocation
-            Payload=json.dumps(payload)
-        )
-        print(response)
+    # Invoke the Lambda function
+    response = lambda_client.invoke(
+        FunctionName='arn:aws:lambda:us-east-1:730335289956:function:agileTrackLambda',
+        InvocationType='RequestResponse',  # Synchronous invocation
+        Payload=json.dumps(payload)
+    )
+    print(response)
 
-        # Check the response
-        response_payload = response['Payload'].read()
-        response_code = response['StatusCode']
+    # Check the response
+    response_payload = response['Payload'].read()
+    response_code = response['StatusCode']
 
-        if response_code == 200:
-            return jsonify({'message': 'Email sent successfully'}), 200
-        else:
-            return jsonify({'error': response_payload.decode()}), response_code
+    if response_code == 200:
+        return jsonify({'message': 'Email sent successfully'}), 200
+    else:
+        return jsonify({'error': response_payload.decode()}), response_code
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 500
 
 
 @app.route('/send_email', methods=['POST'])
