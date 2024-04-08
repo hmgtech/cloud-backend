@@ -343,11 +343,12 @@ def share_board(current_user):
     if shared_board:
         return jsonify({"message": "Board is already shared with this user"}), 400
 
+    
+    # Share the board with the user
+    cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
     conn.commit()
     cursor.close()
     conn.close()
-    # Share the board with the user
-    cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
     return send_email_from_backend(to_email, from_email, from_name, board_title)
 
     # return jsonify({"message": "Board shared successfully"}), 200
