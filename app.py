@@ -35,6 +35,17 @@ app.config['MAIL_PASSWORD'] = 'dtzw tuaq ejtm qkqd'
 
 mail = Mail(app)
 
+def get_secret():
+    # Create a Secrets Manager client
+    client = boto3.client('secretsmanager')
+
+    # Fetch the secret
+    secret_name = "AgileTrackSecret"
+    response = client.get_secret_value(SecretId=secret_name)
+    secret = json.loads(response['SecretString'])
+    print(secret)
+    return secret
+
 def create_connection():
     return mysql.connector.connect(
         host=host,
@@ -431,4 +442,5 @@ def send_email():
 
 
 if __name__ == "__main__":
+    get_secret()
     app.run(debug=True)
