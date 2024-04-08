@@ -44,30 +44,30 @@ def get_secret():
     print(secret)
     return secret
 
-def create_connection():
-    return mysql.connector.connect(
-        host=host,
-        user=username,
-        passwd=password,
-        database=database_name
-    )
+# def create_connection():
+#     return mysql.connector.connect(
+#         host=host,
+#         user=username,
+#         passwd=password,
+#         database=database_name
+#     )
 
-# Create 'boards' table if not exists
-create_boards_table_query = """
-CREATE TABLE IF NOT EXISTS boards (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    state JSON
-)
-"""
-conn = create_connection()
-cursor = conn.cursor()
-cursor.execute(create_boards_table_query)
-conn.commit()
-cursor.close()
-conn.close()
+# # Create 'boards' table if not exists
+# create_boards_table_query = """
+# CREATE TABLE IF NOT EXISTS boards (
+#     id INT AUTO_INCREMENT PRIMARY KEY,
+#     state JSON
+# )
+# """
+# conn = create_connection()
+# cursor = conn.cursor()
+# cursor.execute(create_boards_table_query)
+# conn.commit()
+# cursor.close()
+# conn.close()
 
 # Secret key for JWT
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+# app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 # Middleware to verify JWT token
 def token_required(f):
