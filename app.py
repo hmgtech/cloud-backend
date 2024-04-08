@@ -25,12 +25,15 @@ password = os.getenv("PASSWORD")
 host = os.getenv("HOST")
 database_name = os.getenv("DATABASE")
 
+print(database_name)
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'agiletrack.service@gmail.com'
 app.config['MAIL_PASSWORD'] = 'dtzw tuaq ejtm qkqd'
+
 
 def create_connection():
     return mysql.connector.connect(
@@ -343,7 +346,6 @@ def share_board(current_user):
     if shared_board:
         return jsonify({"message": "Board is already shared with this user"}), 400
 
-    
     # Share the board with the user
     cursor.execute("INSERT INTO user_boards (board_id, user_id) VALUES (%s, %s)", (board_id, user[0]))
     conn.commit()
@@ -372,7 +374,7 @@ Best regards,
 
     try:
         # Initialize boto3 client for AWS Lambda
-        session = boto3.Session(profile_name='lab')
+        session = boto3.Session()
         lambda_client = session.client('lambda', region_name='us-east-1')
 
         # Payload to be passed to the Lambda function
