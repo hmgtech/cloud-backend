@@ -7,7 +7,15 @@ load_dotenv()
 username = os.getenv("DBUSERNAME")
 password = os.getenv("PASSWORD")
 DB_host = os.getenv("HOST")
-DATABASE_NAME = os.getenv("DATABASE")
+DATABASE_NAME = "agiletrack"#os.getenv("DATABASE")
+
+print(DATABASE_NAME)
+# load_dotenv()
+
+# username = "admin"
+# password = "password"
+# DB_host = "agiletrackdb.chwc2ywyoj7b.us-east-1.rds.amazonaws.com"
+# DATABASE_NAME = "agiletrackdb"
 
 # Connect to MySQL server
 conn = mysql.connector.connect(
@@ -20,10 +28,10 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 
 # Create the database
-cursor.execute("CREATE DATABASE IF NOT EXISTS kanban")
+cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}")
 
 # Switch to the created database
-cursor.execute("USE kanban")
+cursor.execute(f"USE {DATABASE_NAME}")
 
 # Create the boards table
 cursor.execute("""
