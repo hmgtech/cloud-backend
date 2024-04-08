@@ -401,7 +401,7 @@ Best regards,
 
     # Invoke the Lambda function
     response = lambda_client.invoke(
-        FunctionName='arn:aws:lambda:us-east-1:730335289956:function:agileTrackLambda2',
+        FunctionName='arn:aws:lambda:us-east-1:730335289956:function:agileTrackLambda',
         InvocationType='RequestResponse',  # Synchronous invocation
         Payload=json.dumps(payload)
     )
