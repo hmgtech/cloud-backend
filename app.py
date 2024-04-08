@@ -32,10 +32,9 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'agiletrack.service@gmail.com'
 app.config['MAIL_PASSWORD'] = 'dtzw tuaq ejtm qkqd'
 
-
 def get_secret():
     # Create a Secrets Manager client
-    client = boto3.client('secretsmanager')
+    client = boto3.client('secretsmanager', region_name='us-east-1')
 
     # Fetch the secret
     secret_name = "AgileTrackSecret"
@@ -44,13 +43,13 @@ def get_secret():
     print(secret)
     return secret
 
-# def create_connection():
-#     return mysql.connector.connect(
-#         host=host,
-#         user=username,
-#         passwd=password,
-#         database=database_name
-#     )
+def create_connection():
+    return mysql.connector.connect(
+        host=host,
+        user=username,
+        passwd=password,
+        database=database_name
+    )
 
 # # Create 'boards' table if not exists
 # create_boards_table_query = """
